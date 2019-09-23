@@ -3,6 +3,7 @@ test
 fileNumber*
 run_server
 run_client
-jambul.png
+*.png
 received_*
 clear_rcv
+*.mp3
