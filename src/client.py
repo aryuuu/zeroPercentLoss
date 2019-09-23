@@ -8,8 +8,8 @@ from bonus import *
 s = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
 
 #set host, port and list of filenames
-host = input("host >> ")
-port = int(input("port >> "))
+host = "127.0.0.1"
+port = 2000
 filenames = input("filenames >> ").split(' ')
 
 #read the file, than split it into packet sized data
@@ -51,7 +51,11 @@ while (not done):
 
 			if (REPLY_TYPE == FIN_ACK): #check if all packets of this file sent
 				done_ID.append(REPLY_ID) #add the file ID to the done list
-				print("file with ID :", ID, "sent!")
+				path = filename.split('/')
+				folder = path[0]
+				fileName = path[1]
+				print("file from folder ",folder, "with filename ",fileName," sent!")
+				print("ID =",ID,": filename =",fileName)
 			else:
 				SEQUENCE_NUMBER[REPLY_ID] = REPLY_SEQUENCE_NUMBER + 1 #get ready for the next packet
 

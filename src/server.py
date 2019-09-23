@@ -1,16 +1,17 @@
 #!/usr/bin/python3
 import socket
-from packethandler import *
 import struct
- 
+
+#create socket
 server_socket = socket.socket(socket.AF_INET, socket.SOCK_DGRAM, socket.IPPROTO_UDP)
-server_socket.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)
+
+#bind socket with server addres 
 server_socket.bind(('', 2000))
-# wrong: mreq = struct.pack("sl", socket.inet_aton("224.51.105.104"), socket.INADDR_ANY)
+
+# add socket to multicast group
 mreq = struct.pack("=4sl", socket.inet_aton("224.51.105.104"), socket.INADDR_ANY)
-
 server_socket.setsockopt(socket.IPPROTO_IP, socket.IP_ADD_MEMBERSHIP, mreq)
-
+server_socket.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)
 print("server is ready")
 
 #queue up to 5 requests
