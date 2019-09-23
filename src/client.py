@@ -55,8 +55,8 @@ while (not done):
 			s.sendto(packet, (host, port)) #send the packet
 
 			reply, addr = s.recvfrom(MAX_PACKET_SIZE) 
-			print("now receiving response from :", addr)
 			REPLY_TYPE, REPLY_ID, REPLY_SEQUENCE_NUMBER, REPLY_DATA = extract_packet(reply) 
+			print("now receiving response from :", addr, "for packet number :", SEQUENCE_NUMBER[REPLY_ID], "for file with ID :", REPLY_ID)
 
 			if (REPLY_TYPE == FIN_ACK): #check if all packets of this file sent
 				done_ID.append(REPLY_ID) #add the file ID to the done list

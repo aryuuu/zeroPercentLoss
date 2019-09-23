@@ -148,7 +148,7 @@ def extract_packet(packet):
 	#set value for TYPE, ID and DATA
 	TYPE = int(packet[0],16)
 	ID = int(packet[1],16)
-	SEQUENCE_NUMBER = int(packet[2:4])
+	SEQUENCE_NUMBER = int(packet[2:6],16)
 	DATA = None
 	print("TYPE :", TYPE)
 	print("ID :", ID)

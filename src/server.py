@@ -31,6 +31,7 @@ while True:
 	# print("Message :", data)
 	if (is_valid(packet)):
 		TYPE, ID, SEQUENCE_NUMBER, DATA = extract_packet(packet) #extract the packet
+		print("received packet number :", SEQUENCE_NUMBER, "for file with ID :", ID)
 		# print("TYPE :", TYPE)
 		# print("ID :", ID)
 		# print("DATA :", end='')
@@ -53,7 +54,7 @@ while True:
 		#build a reply packet and send it to client
 		reply = build_packet(REPLY_TYPE, ID, SEQUENCE_NUMBER)
 		server_socket.sendto(reply, addr)
-		print("sending response to :", addr)
+		print("sending response to :", addr, "for packet number :", SEQUENCE_NUMBER, "from file with ID", ID)
 
 		if (len(incomplete_ID) == 0): #check if there is no more packet to receive
 			break #stop receiving
