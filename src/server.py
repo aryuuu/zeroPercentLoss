@@ -43,6 +43,7 @@ while True:
 			f.write(packet_buffer[ID])
 			f.close()
 			print("file with ID :", ID,"saved!")
+			del packet_buffer[ID]
 			# incomplete_ID.remove(ID) 
 
 		else:
