@@ -84,8 +84,8 @@ def build_packet(TYPE, ID, SEQUENCE_NUMBER, DATA=None):
 
 	temp = imp_int_to_ascii(first_byte) + imp_int_to_ascii(SEQUENCE_NUMBER, 4) + imp_int_to_ascii(LENGTH, 4)
 	if (DATA != None):
-		# temp += DATA
-		temp += DATA.encode()
+		temp += DATA
+		# temp += DATA.encode()
 
 	checksum = 0x0
 
@@ -102,8 +102,8 @@ def build_packet(TYPE, ID, SEQUENCE_NUMBER, DATA=None):
 	result = imp_int_to_ascii(first_byte) + imp_int_to_ascii(SEQUENCE_NUMBER, 4) + imp_int_to_ascii(LENGTH, 4) + imp_int_to_ascii(checksum, 4)
 
 	if (DATA != None):
-		result += DATA.encode()
-
+		# result += DATA.encode()
+		result += DATA
 	return result
 
 

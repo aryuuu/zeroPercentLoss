@@ -28,16 +28,18 @@ while True:
 		TYPE, ID, SEQUENCE_NUMBER, DATA = extract_packet(packet) #extract the packet
 		
 		if ID in packet_buffer: #check if this is the first packet of the file
-			packet_buffer[ID] += bytes.fromhex(DATA).decode('utf-8') #append to the previous packets of the file with same ID
+			# packet_buffer[ID] += bytes.fromhex(DATA).decode('utf-8') #append to the previous packets of the file with same ID
+			packet_buffer[ID] += bytes.fromhex(DATA)
 		else:
-			packet_buffer[ID] = bytes.fromhex(DATA).decode('utf-8') #create new key for the file
+			# packet_buffer[ID] = bytes.fromhex(DATA).decode('utf-8') #create new key for the file
+			packet_buffer[ID] = bytes.fromhex(DATA)
 			# incomplete_ID.append(ID)
 
 		#check if that is the last packet for the file
 		if (TYPE == FIN):
 			REPLY_TYPE = FIN_ACK 
 			#once the file received completely, write it to filesystem
-			f = open("received_"+str(ID), 'w') 
+			f = open("received_"+str(ID), 'wb') 
 			f.write(packet_buffer[ID])
 			f.close()
 			print("file with ID :", ID,"saved!")

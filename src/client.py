@@ -15,7 +15,7 @@ filenames = input("filenames >> ").split(' ')
 #read the file, than split it into packet sized data
 contents = []
 for filename in filenames:
-	temp = open(filename).read()
+	temp = open(filename,'rb').read()
 	contents.append([temp[i:i+MAX_DATA_SIZE] for i in range(0, len(temp), MAX_DATA_SIZE)])
 
 print("number of files to be sent :", len(contents))
