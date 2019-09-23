@@ -22,10 +22,7 @@ def int_to_ascii(num, zero_padding=0): #this method contains some weird bug
 	result = ''
 	for i in range(0,len(num), 2):
 		result += chr(int(num[i:i+2], 16))
-	# 	print("temp result :", result.encode().hex())
-	# print("result :", result.encode().hex())
-	# print("len result :", len(result))
-	# if ()
+
 
 	return result
 
@@ -56,20 +53,18 @@ def is_valid(packet):
 	# packet = packet.decode() #decode packet
 	purged_packet = packet[:5] + packet[7:] #exlude the checksum from the packet
 	
-	# headers = packet[:5] #get TYPE, ID, LENGTH of packet
-	# body = packet[7:] #get DATA from packet
-
 	#count the new checksum
 	new_checksum = 0x0
-	for i in purged_packet:
-		new_checksum ^= int(i)
-	# for i in range(0,len(purged_packet),2):
-	# 	# new_checksum ^= ascii_to_int(purged_packet[i:i+2])
-	# 	new_checksum ^= purged_packet[i:i+2]
+	for i in range(0, len(purged_packet), 2):
+		chunks = int(purged_packet[i]/16) * (16**3) + (purged_packet[i]%16) * (16**2) 
 
-	print("given checksum :", given_checksum)
-	print("new checksum :", new_checksum)
-	#compare new_checksum to the given checksum
+		if (i+1 < len(purged_packet)):
+			chunks += int(purged_packet[i+1]/16) * (16**1) + (purged_packet[i+1]%16) * (16**0)
+
+		new_checksum ^= chunks
+	# for i in range(0, len(purged_packet), 2):
+	# 	checksum ^= (int(purged_packet[i]/16) * (16**3) + (purged_packet[i]%16) * (16**2) + (int(purged_packet[i+1]/16) * (16**1)) + (purged_packet[i+1]%16) * (16**0))
+
 	return new_checksum == given_checksum
 
 
@@ -82,10 +77,14 @@ def is_valid(packet):
 #this method return an encoded string which is the packet
 def build_packet(TYPE, ID, SEQUENCE_NUMBER, DATA=None):
 	
+	print("=========")
+	print("building packet")
+	print("TYPE :", TYPE)
+	print("ID :", ID)
 	#set the first byte, consist of TYPE and ID
 	# first_byte = str(hex((TYPE << 4) + ID)).strip('0x')
 	first_byte = (TYPE << 4) + ID
-	print("first_byte :", int_to_ascii(first_byte))
+	# print("first_byte :", int_to_ascii(first_byte))
 	print("first_byte in hex :", str(hex(first_byte)))
 	print("SEQUENCE_NUMBER :", int_to_ascii(SEQUENCE_NUMBER).encode())
 	#set packet LENGTH
@@ -102,36 +101,36 @@ def build_packet(TYPE, ID, SEQUENCE_NUMBER, DATA=None):
 		temp += DATA.encode()
 
 	checksum = 0x0
-	for i in temp:
-		checksum ^= i
+	# for i in temp:
+	# 	checksum ^= i
+	for i in range(0, len(temp), 2):
+		chunks = int(temp[i]/16) * (16**3) + (temp[i]%16) * (16**2) 
+
+		if (i+1 < len(temp)):
+			chunks += int(temp[i+1]/16) * (16**1) + (temp[i+1]%16) * (16**0)
+
+		checksum ^= chunks
+
+		# checksum ^= (int(temp[i]/16) * (16**3) + (temp[i]%16) * (16**2) + (int(temp[i+1]/16) * (16**1)) + (temp[i+1]%16) * (16**0))
 	# for i in range(0,len(temp),2):
 		# checksum ^= ascii_to_int(temp[i:i+2])
 		
 
-	print("counted checksum :", hex(checksum))
-	# print("converted checksum in ascii :", int_to_ascii(checksum).encode())
-	print("converted checksum in ascii :", imp_int_to_ascii(checksum))
-
 	#compose the packet
-	# result = int_to_ascii(first_byte) + int_to_ascii(SEQUENCE_NUMBER,4) + int_to_ascii(LENGTH,4) + int_to_ascii(checksum,4) # this code contain some weird bug
-	# print("first byte + SEQUENCE_NUMBER :", (int_to_ascii(first_byte) + int_to_ascii(SEQUENCE_NUMBER, 4)).encode().hex()) 
-	# print("first byte + SEQUENCE_NUMBER + LENGTH", (int_to_ascii(first_byte) + int_to_ascii(SEQUENCE_NUMBER, 4) + int_to_ascii(LENGTH, 4)).encode().hex())
-	# print("first_byte + SEQUENCE_NUMBER + LENGTH + checksum", (int_to_ascii(first_byte) + int_to_ascii(SEQUENCE_NUMBER, 4) + int_to_ascii(LENGTH, 4) + int_to_ascii(checksum, 4)).encode().hex())
 	
-	# result = int_to_ascii(first_byte) + int_to_ascii(SEQUENCE_NUMBER, 4) + int_to_ascii(LENGTH, 4) + int_to_ascii(checksum, 4)
 	result = imp_int_to_ascii(first_byte) + imp_int_to_ascii(SEQUENCE_NUMBER, 4) + imp_int_to_ascii(LENGTH, 4) + imp_int_to_ascii(checksum, 4)
 
 	print("result :", result.hex())
 	# print("result consist of", len(result.hex())/2, "bytes")
 	# print("PACKET LENGTH :", imp_int_to_ascii(LENGTH).hex())
-	print("converted checksum in ascii :", imp_int_to_ascii(checksum))
-	print("checksum from result :", int(result.hex()[10:14], 16))
-	print("checksum from result in hex : 0x%s" %result.hex()[10:14])
+	# print("converted checksum in ascii :", imp_int_to_ascii(checksum))
+	# print("checksum from result :", int(result.hex()[10:14], 16))
+	# print("checksum from result in hex : 0x%s" %result.hex()[10:14])
 	if (DATA != None):
 		result += DATA.encode()
-
+	print("=========")
 	# print("result :", result[:100].encode())
-	print("result :", result[:100])
+	# print("result :", result[:100])
 	# return result.encode()
 	return result
 
@@ -142,6 +141,8 @@ def build_packet(TYPE, ID, SEQUENCE_NUMBER, DATA=None):
 #packet is an encoded string
 #this method return TYPE, ID, SEQUENCE_NUMBER and DATA
 def extract_packet(packet):
+	print("=========")
+	print("extracting packet")
 	packet = packet.hex()
 
 	#set value for TYPE, ID and DATA
@@ -149,6 +150,9 @@ def extract_packet(packet):
 	ID = int(packet[1],16)
 	SEQUENCE_NUMBER = int(packet[2:4])
 	DATA = None
+	print("TYPE :", TYPE)
+	print("ID :", ID)
+	print("=========")
 
 	if(TYPE != ACK and TYPE != FIN_ACK):
 		DATA = packet[14:]

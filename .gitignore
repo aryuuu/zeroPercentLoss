@@ -5,4 +5,4 @@ run_server
 run_client
 jambul.png
 received_*
-
+clear_rcv
